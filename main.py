@@ -64,13 +64,7 @@ def get_MACD():
     signal = signal.tolist()
     hist = hist.tolist()
 
-
-# find way to resample data so it calculates pivots only a day at a time, get rid of ms in index
-# could use support levels as a place to sell to limit loss or resistance
-# check out how we find up and down trends and see if it can be optomized
-# derivative of tan is 0 when there is a peak or valley???
 # https://stackoverflow.com/questions/22583391/peak-signal-detection-in-realtime-timeseries-data/43512887#43512887
-
 
 def pivots():
     global pp, R1, S1
@@ -84,15 +78,12 @@ def pivots():
 
 def order_type():
     global btc_df, macd, signal, hist, pp, R1, S1
-
     w, q, x, y, l = 0, 0, 0, 0, 0
     flag = True
     total = 10000
-    buy, sell = [], []
+    buy, sell, pivots = [], [], []
     overB = 0
     nobuytoday = 0
-
-    pivots = []
     counter = 0
     lastPivot = 0
     Range = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -225,21 +216,12 @@ def on_message(ws, message):
         btc_df = btc_df.append(new_df)
 
 
-
-
-        # 1) Compare 1 day HnL with 4h HnL
-        # 2) Set Global vars for macd, btc_df everything...
-        # 3) Be able to execute trades
-        # 4) Be able to reconnect if issues arise
-
-
 def on_close(ws):
     print('### Connection Closed ###')
 
 ws = websocket.WebSocketApp(socket,  on_message=on_message,  on_close=on_close)
 ws.run_forever()
-'''
-'''
+
 timestamp = client._get_earliest_valid_timestamp('BTCUSDT', '4h')
 bars = client.get_historical_klines('BTCUSDT', '4h', timestamp, limit=1000)
 
